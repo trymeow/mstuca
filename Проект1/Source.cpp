@@ -13,8 +13,10 @@ int main() {
 	if (!fin.is_open())
 		cout << "ошибка открытия файла";
 	string str;
-	fin >> str;
-	cout << str<< '\n';
+	while (!fin.eof()) {
+		getline(fin, str);
+		cout << str << endl;
+	}
 	system("pause");
 	return 0;
 }
