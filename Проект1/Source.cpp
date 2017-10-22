@@ -1,6 +1,8 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <sstream>
+
 
  
 using namespace  std;
@@ -23,14 +25,22 @@ int main() {
 	setlocale(LC_ALL, "rus");
 	ifstream fin;
 	fin.open("Text.txt");
-	if (!fin.is_open())
-		cout << "ошибка открытия файла";
-	string str;
-	while (!fin.eof()) {
-		getline(fin, str);
-		cout << str << endl;
-	}
 	Programmer a;
+	string str;
+	fin >> str;
+	a.name_ = str;
+	a.name_.append(" ");
+	fin >> str;
+	a.name_.append(str);
+	fin >> str;
+	istringstream buffer(str);
+	buffer >> a.IBMnumber_;
+	fin >> str;
+	buffer.clear();
+	buffer.str(str);
+	buffer >> a.cipher_;
+		cout << a.name_ << '\t' << a.IBMnumber_ << '\t' << a.cipher_;
+
 	system("pause");
 	return 0;
 }
