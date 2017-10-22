@@ -7,6 +7,7 @@ using namespace  std;
 ifstream fin;
 
 int main() {
+	//comment
 	setlocale(LC_ALL, "rus");
 	fin.open("Text.txt");
 	if (!fin.is_open())
