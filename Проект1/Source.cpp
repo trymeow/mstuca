@@ -44,26 +44,23 @@ int main() {
 	a.date_ = str;
 	fin >> str;
 	buffer.str(str);
-	unsigned shour;
-	unsigned sminutes;
-	buffer >> shour;
-	shour = shour * 60;
+	unsigned hour;
+	buffer >> hour;
+	a.stime_ = hour * 60;
 	buffer.ignore();
-	buffer >> sminutes;
-	sminutes = shour + sminutes;
+	buffer >> hour;
+	a.stime_ = hour + a.stime_;
 	fin >> str;
 	buffer.clear();
 	buffer.str(str);
-	unsigned ehour;
-	unsigned eminutes;
-	buffer >> ehour;
-	ehour = ehour * 60;
+	buffer >> hour;
+	a.etime_ = hour * 60;
 	buffer.ignore();
-	buffer >> eminutes;
-	eminutes = ehour + eminutes;
+	buffer >> hour ;
+	a.etime_ = hour + a.etime_;
 
 
-	cout << a.name_ << '\t' << a.IBMnumber_ << '\t' << a.cipher_ << " " << a.date_ << " "<<  sminutes << " " << eminutes;
+	cout << a.name_ << '\t' << a.IBMnumber_ << '\t' << a.cipher_ << " " << a.date_ << " "<< a.stime_ << " " << a.etime_;
 
 	system("pause");
 	return 0;
