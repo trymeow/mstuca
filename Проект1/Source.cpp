@@ -39,7 +39,31 @@ int main() {
 	buffer.clear();
 	buffer.str(str);
 	buffer >> a.cipher_;
-		cout << a.name_ << '\t' << a.IBMnumber_ << '\t' << a.cipher_;
+	buffer.clear();
+	fin >> str;
+	a.date_ = str;
+	fin >> str;
+	buffer.str(str);
+	unsigned shour;
+	unsigned sminutes;
+	buffer >> shour;
+	shour = shour * 60;
+	buffer.ignore();
+	buffer >> sminutes;
+	sminutes = shour + sminutes;
+	fin >> str;
+	buffer.clear();
+	buffer.str(str);
+	unsigned ehour;
+	unsigned eminutes;
+	buffer >> ehour;
+	ehour = ehour * 60;
+	buffer.ignore();
+	buffer >> eminutes;
+	eminutes = ehour + eminutes;
+
+
+	cout << a.name_ << '\t' << a.IBMnumber_ << '\t' << a.cipher_ << " " << a.date_ << " "<<  sminutes << " " << eminutes;
 
 	system("pause");
 	return 0;
