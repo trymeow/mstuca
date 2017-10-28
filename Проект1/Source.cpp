@@ -9,20 +9,61 @@ using namespace  std;
 
 class Programmer {
 public:
+	void setName(string name) {
+		name_ = name;
+	};
+	string getName() {
+		return name_;
+	};
+	void setIBMnumber(unsigned number) {
+
+		IBMnumber_ = number;
+	};
+	unsigned getIBMnumber() {
+		return IBMnumber_;
+	};
+	void setcipher(int n) {
+		cipher_ = n;
+	};
+	int getcipher() {
+		return cipher_
+	};
+	void setdate(string date) {
+
+		date_ = date;
+	};
+	string date () {
+		return date_;
+	
+	};
+ 
+	void setStime(unsigned time) {
+		stime_ = time;
+	};
+	void setEtime(unsigned time) {
+		etime_ = time;
+	};
+	unsigned getStime() {
+		return stime_;
+	};
+	unsigned getEtime() {
+		return etime_;
+	}
+
+private:
+	unsigned stime_;
+	unsigned etime_;
 	string name_;
 	unsigned IBMnumber_;
 	int cipher_;
 	string date_;
-	unsigned stime_;
-	unsigned etime_;
-
 
 
 };
 
 int main() {
 	//comment
-	setlocale(LC_ALL, "rus");
+	/*setlocale(LC_ALL, "rus");
 	ifstream fin;
 	fin.open("Text.txt");
 	Programmer a;
@@ -46,10 +87,10 @@ int main() {
 	buffer.str(str);
 	unsigned hour;
 	buffer >> hour;
-	a.stime_ = hour * 60;
+	a.gettime = hour * 60;
 	buffer.ignore();
 	buffer >> hour;
-	a.stime_ = hour + a.stime_;
+	a.gettime += hour ;
 	fin >> str;
 	buffer.clear();
 	buffer.str(str);
@@ -57,11 +98,16 @@ int main() {
 	a.etime_ = hour * 60;
 	buffer.ignore();
 	buffer >> hour ;
-	a.etime_ = hour + a.etime_;
+	a.etime_ += hour ;
 
 
-	cout << a.name_ << '\t' << a.IBMnumber_ << '\t' << a.cipher_ << " " << a.date_ << " "<< a.stime_ << " " << a.etime_;
-
+	cout << a.name_ << '\t' << a.IBMnumber_ << '\t' << a.cipher_ << " " << a.date_ << " "<< a.gettime << " " << a.etime_;
+*/
+	Programmer a;
+	unsigned time = 21321;
+	a.setStime(time);
+	a.setEtime(time + 10);
+	cout << a.getStime() << '\t' << a.getEtime() << '\n';
 	system("pause");
 	return 0;
 }
