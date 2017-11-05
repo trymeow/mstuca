@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <sstream>
+#include <deque>
 
 
  
@@ -81,35 +82,45 @@ private:
 };
 
 
-Programmer parse( string filename) {
+deque<Programmer> parse( string filename) {
 	ifstream fin;
 	fin.open(filename);
-	Programmer a;
-	string str;
-	fin >> str;
-	a.setName(str);
-	a.appendToName(" ");
-	fin >> str;
-	a.appendToName(str);
-	fin >> str;
-	a.setIBMnumber(str);
-	fin >> str;
-	a.setcipher(str);
-	fin >> str;
-	a.setdate(str);
-	fin >> str;
-	a.setStime(str);
-	fin >> str;
-	a.setEtime(str);
-	return a ;
+	deque<Programmer> mydeque;
+	while (!fin.eof()) {
+		Programmer a;
+		string str;
+		fin >> str;
+		a.setName(str);
+		a.appendToName(" ");
+		fin >> str;
+		a.appendToName(str);
+		fin >> str;
+		a.setIBMnumber(str);
+		fin >> str;
+		a.setcipher(str);
+		fin >> str;
+		a.setdate(str);
+		fin >> str;
+		a.setStime(str);
+		fin >> str;
+		a.setEtime(str);
+		mydeque.push_back(a);
+	}
+	return mydeque ;
 }
+
+
 
 int main() {
 	//comment
 	setlocale(LC_ALL, "rus");
 	ifstream fin;
-	Programmer vovan = parse("Text.txt");
-	cout << vovan.getName()<< " "<< vovan.getIBMnumber()<< " " << vovan.getcipher() << " " << vovan.getdate()<< " " << vovan.getStime()<< " "<< vovan.getEtime();
+	deque<Programmer> a = parse("Text.txt");
+	while (!a.empty()) {
+		Programmer c = a.front();   
+		cout << c.getName() << " " << c.getIBMnumber() << " " << c.getcipher() << " " << c.getdate() << " " << c.getStime() << " " << c.getEtime() << endl;
+		a.pop_front();
+	};
 	system("pause");
 	return 0;
 }
