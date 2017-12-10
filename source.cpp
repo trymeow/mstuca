@@ -25,6 +25,7 @@ public:
     buffer >> hour;
     stime_ += hour;
   }
+  void setStime(unsigned stime) { stime_ = stime; }
   void setEtime(string str) {
     istringstream buffer(str);
     unsigned hour;
@@ -34,6 +35,7 @@ public:
     buffer >> hour;
     etime_ += hour;
   }
+  void setEtime(unsigned etime) { etime_ = etime; }
   unsigned getStime() { return stime_; }
   unsigned getEtime() { return etime_; }
   void appendToName(string name) { name_.append(name); }
@@ -44,6 +46,11 @@ public:
   void setcipher(string str) {
     istringstream buffer(str);
     buffer >> cipher_;
+  }
+  friend ostream &operator<<(ostream &os, const Programmer &pr) {
+    os << pr.name_ << '\t' << pr.IBMnumber_ << '\t' << pr.cipher_ << '\t'
+       << pr.date_ << '\t' << pr.stime_ << '\t' << pr.etime_ << endl;
+    return os;
   }
 
 private:
@@ -119,31 +126,36 @@ void rec(deque<Programmer> workers) {
   }
 }
 
-void output(string number) {
+void output(unsigned number) {
   ifstream fin;
-  fin.open(number, ios::in | ios::binary);
+  fin.open(to_string(number).append(".dat"), ios::in | ios::binary);
+  if (!fin) {
+    cout << "can't open " << number << ".dat\n";
+    exit(0);
+  }
   while (!fin.eof()) {
+    Programmer pr;
+    pr.setIBMnumber(number);
     int n = 0;
     fin.read((char *)&n, sizeof(n));
     if (fin.eof())
       break;
-    cout << n << "\n";
     char *str1 = new char[n + 1]();
     fin.read(str1, n);
-    cout << str1 << endl;
-    int tmp;
+    pr.setName(str1);
+    unsigned tmp;
     fin.read((char *)&tmp, sizeof(tmp));
-    cout << tmp << endl;
-    int d;
+    pr.setcipher(tmp);
+    unsigned d;
     fin.read((char *)&d, sizeof(d));
-    cout << d << "\n";
     char *str2 = new char[d + 1]();
     fin.read(str2, d);
-    cout << str2 << endl;
+    pr.setdate(str2);
     fin.read((char *)&tmp, sizeof(tmp));
-    cout << tmp << endl;
+    pr.setStime(tmp);
     fin.read((char *)&tmp, sizeof(tmp));
-    cout << tmp << endl;
+    pr.setEtime(tmp);
+    cout << pr;
   }
   fin.close();
 }
@@ -152,11 +164,12 @@ int main() {
   setlocale(LC_ALL, "rus");
   deque<Programmer> a = parse("Text.txt");
   rec(a);
-  string namebd;
-  cin >> namebd;
-  output(namebd);
+  while (1) {
+    unsigned namebd;
+    cin >> namebd;
+    if (namebd == 0)
+      break;
+    output(namebd);
+  }
   return 0;
 }
-
-
-
