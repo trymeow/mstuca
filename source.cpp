@@ -3,6 +3,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include<algorithm>
 
 using namespace std;
 
@@ -52,6 +53,23 @@ public:
        << pr.date_ << '\t' << pr.stime_ << '\t' << pr.etime_ << endl;
     return os;
   }
+  bool operator<(const Programmer &pr) {
+    if (this->name_ < pr.name_)
+      return 1;
+  else  if (this->name_ > pr.name_)
+      return 0;
+    else 
+      if (this->date_ < pr.date_)
+        return 1;
+      else if (this->date_ > pr.date_)
+        return 0;
+      else
+        if (this->stime_ < pr.stime_)
+          return 1;
+        else
+          return 0;
+return 0;  
+}
 
 private:
   string name_;
@@ -126,9 +144,10 @@ void rec(deque<Programmer> workers) {
   }
 }
 
-void output(unsigned number) {
+deque<Programmer> output(unsigned number) {
   ifstream fin;
   fin.open(to_string(number).append(".dat"), ios::in | ios::binary);
+  deque<Programmer> programmers;
   if (!fin) {
     cout << "can't open " << number << ".dat\n";
     exit(0);
@@ -155,9 +174,10 @@ void output(unsigned number) {
     pr.setStime(tmp);
     fin.read((char *)&tmp, sizeof(tmp));
     pr.setEtime(tmp);
-    cout << pr;
+    programmers.push_back(pr);
   }
   fin.close();
+  return programmers;
 }
 
 int main() {
@@ -169,7 +189,11 @@ int main() {
     cin >> namebd;
     if (namebd == 0)
       break;
-    output(namebd);
+  deque<Programmer> pr =  output(namebd);
+	sort(pr.begin(), pr.end());
+	for (auto it = pr.begin(); it != pr.end(); it ++)
+		cout << *it;
   }
+	
   return 0;
 }
