@@ -1,9 +1,9 @@
+#include <algorithm>
 #include <deque>
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
-#include<algorithm>
 
 using namespace std;
 
@@ -56,20 +56,18 @@ public:
   bool operator<(const Programmer &pr) {
     if (this->name_ < pr.name_)
       return 1;
-  else  if (this->name_ > pr.name_)
+    else if (this->name_ > pr.name_)
       return 0;
-    else 
-      if (this->date_ < pr.date_)
-        return 1;
-      else if (this->date_ > pr.date_)
-        return 0;
-      else
-        if (this->stime_ < pr.stime_)
-          return 1;
-        else
-          return 0;
-return 0;  
-}
+    else if (this->date_ < pr.date_)
+      return 1;
+    else if (this->date_ > pr.date_)
+      return 0;
+    else if (this->stime_ < pr.stime_)
+      return 1;
+    else
+      return 0;
+    return 0;
+  }
 
 private:
   string name_;
@@ -185,15 +183,46 @@ int main() {
   deque<Programmer> a = parse("Text.txt");
   rec(a);
   while (1) {
-    unsigned namebd;
+       string command;
+    cout << "enter command" << endl;
+    cin >> command;
+    if (command == "show") {
+ unsigned namebd;
+    cout << " enter data base" << endl;
     cin >> namebd;
-    if (namebd == 0)
-      break;
-  deque<Programmer> pr =  output(namebd);
-	sort(pr.begin(), pr.end());
-	for (auto it = pr.begin(); it != pr.end(); it ++)
-		cout << *it;
-  }
-	
+
+      deque<Programmer> pr = output(namebd);
+      sort(pr.begin(), pr.end());
+      for (auto it = pr.begin(); it != pr.end(); it++)
+        cout << *it;
+    }
+
+    else if (command == "calculate") {
+  unsigned namebd;
+    cout << " enter data base" << endl;
+    cin >> namebd;
+
+     deque<Programmer> pr = output(namebd);
+      sort(pr.begin(), pr.end());
+      unsigned counter = 0;
+      for (auto it = pr.begin(); it != pr.end(); it++) {
+        if (it == pr.begin()) {
+          cout << it->getName() << endl;
+          counter++;
+          continue;
+        }
+        if (it->getName() == (it - 1)->getName())
+          continue;
+        cout << it->getName() << endl;
+        counter++;
+      }
+      cout << counter << endl;
+    }
+ else if (command == "exit")
+exit (0); 
+
+    else
+      cout << "error" << endl;
+ }
   return 0;
 }
