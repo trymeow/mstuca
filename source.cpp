@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <deque>
+#include <experimental/filesystem>
 #include <fstream>
 #include <iostream>
 #include <sstream>
@@ -10,13 +11,13 @@ using namespace std;
 class Programmer {
 public:
   void setName(string name) { name_ = name; }
-  string getName() { return name_; }
+  string getName() const { return name_; }
   void setIBMnumber(unsigned number) { IBMnumber_ = number; }
-  unsigned getIBMnumber() { return IBMnumber_; }
+  unsigned getIBMnumber() const { return IBMnumber_; }
   void setcipher(int n) { cipher_ = n; }
-  int getcipher() { return cipher_; }
+  int getcipher() const { return cipher_; }
   void setdate(string date) { date_ = date; }
-  string getdate() { return date_; }
+  string getdate() const { return date_; }
   void setStime(string str) {
     istringstream buffer(str);
     unsigned hour;
@@ -37,8 +38,8 @@ public:
     etime_ += hour;
   }
   void setEtime(unsigned etime) { etime_ = etime; }
-  unsigned getStime() { return stime_; }
-  unsigned getEtime() { return etime_; }
+  unsigned getStime() const { return stime_; }
+  unsigned getEtime() const { return etime_; }
   void appendToName(string name) { name_.append(name); }
   void setIBMnumber(string str) {
     istringstream buffer(str);
@@ -53,7 +54,7 @@ public:
        << pr.date_ << '\t' << pr.stime_ << '\t' << pr.etime_ << endl;
     return os;
   }
-  bool operator<(const Programmer &pr) {
+  bool operator<(const Programmer &pr) const {
     if (this->name_ < pr.name_)
       return 1;
     else if (this->name_ > pr.name_)
@@ -142,16 +143,17 @@ void rec(deque<Programmer> workers) {
   }
 }
 
-deque<Programmer> output(unsigned number) {
+deque<Programmer> output(string namefile) {
   ifstream fin;
-  fin.open(to_string(number).append(".dat"), ios::in | ios::binary);
+  fin.open(namefile, ios::in | ios::binary);
   deque<Programmer> programmers;
   if (!fin) {
-    cout << "can't open " << number << ".dat\n";
+    cout << "can't open " << namefile << endl;
     exit(0);
   }
   while (!fin.eof()) {
     Programmer pr;
+    unsigned number = stoul(namefile);
     pr.setIBMnumber(number);
     int n = 0;
     fin.read((char *)&n, sizeof(n));
@@ -178,18 +180,50 @@ deque<Programmer> output(unsigned number) {
   return programmers;
 }
 
+deque<Programmer> all_programmer() {
+  namespace fs = std::experimental::filesystem;
+  deque<Programmer> prog;
+  for (auto &p : fs::directory_iterator(".")) {
+    fs::path pth = p.path();
+    if (pth.extension() == ".dat") {
+      deque<Programmer> pr = output(pth.filename());
+      prog.insert(prog.begin(), pr.begin(), pr.end());
+    }
+  }
+  return prog;
+}
+
+bool cmp_by_theme(const Programmer &pr1, const Programmer &pr2) {
+  if (pr1.getName() < pr2.getName())
+    return 1;
+  else if (pr1.getName() > pr2.getName())
+    return 0;
+  else if (pr1.getName() == pr2.getName()) {
+    if (pr1.getcipher() < pr2.getcipher())
+      return 1;
+    else if (pr1.getcipher() > pr2.getcipher())
+      return 0;
+    else if (pr1.getcipher() == pr2.getcipher()) {
+      if (pr1.getIBMnumber() < pr2.getIBMnumber())
+        return 1;
+      else
+        return 0;
+    }
+  }
+}
+
 int main() {
   setlocale(LC_ALL, "rus");
   deque<Programmer> a = parse("Text.txt");
   rec(a);
   while (1) {
-       string command;
+    string command;
     cout << "enter command" << endl;
     cin >> command;
     if (command == "show") {
- unsigned namebd;
-    cout << " enter data base" << endl;
-    cin >> namebd;
+      string namebd;
+      cout << " enter data base" << endl;
+      cin >> namebd;
 
       deque<Programmer> pr = output(namebd);
       sort(pr.begin(), pr.end());
@@ -198,11 +232,11 @@ int main() {
     }
 
     else if (command == "calculate") {
-  unsigned namebd;
-    cout << " enter data base" << endl;
-    cin >> namebd;
+      string namebd;
+      cout << " enter data base" << endl;
+      cin >> namebd;
 
-     deque<Programmer> pr = output(namebd);
+      deque<Programmer> pr = output(namebd);
       sort(pr.begin(), pr.end());
       unsigned counter = 0;
       for (auto it = pr.begin(); it != pr.end(); it++) {
@@ -217,12 +251,42 @@ int main() {
         counter++;
       }
       cout << counter << endl;
-    }
- else if (command == "exit")
-exit (0); 
+    } else if (command == "theme") {
+      unsigned counter = 0;
+      deque<Programmer> programmer = all_programmer();
+      sort(programmer.begin(), programmer.end(), cmp_by_theme);
+      for (auto it = programmer.begin(); it != programmer.end(); it++) {
+        if (it == programmer.begin()) {
+          counter++;
+          if (it + 1 == programmer.end())
+            cout << it->getName() << '\t' << it->getcipher() << '\t' << counter
+                 << endl;
+          continue;
+        }
+        if (it->getName() == (it - 1)->getName()) {
+          if (it->getcipher() == (it - 1)->getcipher()) {
+            if (it->getIBMnumber() != (it - 1)->getIBMnumber()) {
+              counter++;
+              if (it + 1 == programmer.end())
+                cout << it->getName() << '\t' << it->getcipher() << '\t'
+                     << counter << endl;
+            }
+          } else {
+            cout << (it - 1)->getName() << '\t' << (it - 1)->getcipher() << '\t'
+                 << counter << endl;
+            counter = 1;
+          }
+        } else {
+          cout << (it - 1)->getName() << '\t' << (it - 1)->getcipher() << '\t'
+               << counter << endl;
+          counter = 1;
+        }
+      }
+    } else if (command == "exit")
+      exit(0);
 
     else
       cout << "error" << endl;
- }
+  }
   return 0;
 }
