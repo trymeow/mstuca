@@ -320,7 +320,24 @@ int main() {
           counter = 1;
         }
       }
-    } else if (command == "exit")
+    } else if (command == "calc_pr") {
+      deque<Programmer> programmer = all_programmer();
+      cout << "number of programmers: " << programmer.size() << endl;
+    } else if (command == "info_about_pr") {
+      deque<Programmer> programmer = all_programmer();
+      string FIO;
+      cout << "enter FIO" << endl;
+			cin.ignore();
+      getline(cin,FIO);
+      for (auto it = programmer.begin(); it != programmer.end(); it++) {
+        if (it->getName() == FIO)
+          cout << "  " << it->getIBMnumber() << '\t' << it->getcipher() << '\t'
+               << it->getdate() << '\t' << it->getStime() << '\t'
+               << it->getEtime() << endl;
+      }
+    }
+
+    else if (command == "exit")
       exit(0);
 
     else
