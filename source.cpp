@@ -225,6 +225,50 @@ bool cmp_by_name(const Programmer &pr1, const Programmer &pr2) {
   }
 }
 
+deque<pair<string, unsigned>> working_units_number() {
+  deque<Programmer> pr = all_programmer();
+  unsigned counter = 0;
+  deque<pair<string, unsigned>> res;
+  sort(pr.begin(), pr.end(), cmp_by_name);
+  for (auto it = pr.begin(); it != pr.end(); it++) {
+    if (it == pr.begin()) {
+      counter++;
+      if (it + 1 == pr.end())
+        res.push_back(make_pair(it->getName(), counter));
+      continue;
+    }
+    if (it->getName() == (it - 1)->getName()) {
+      if (it->getIBMnumber() != (it - 1)->getIBMnumber()) {
+        counter++;
+        if (it + 1 == pr.end())
+          res.push_back(make_pair(it->getName(), counter));
+      } else if (it + 1 == pr.end()) {
+        res.push_back(make_pair((it - 1)->getName(), counter));
+        counter = 1;
+      }
+    } else {
+
+      res.push_back(make_pair((it - 1)->getName(), counter));
+      counter = 1;
+    }
+  }
+  return res;
+}
+
+bool cmp_by_quantity(const pair<string, unsigned> &pr1,
+                     const pair<string, unsigned> &pr2) {
+  if (pr1.second < pr2.second)
+    return 1;
+  else if (pr1.second > pr2.second)
+    return 0;
+  else if (pr1.second == pr2.second) {
+    if (pr1.first < pr2.first)
+      return 1;
+    else
+      return 0;
+  }
+}
+
 int main() {
   setlocale(LC_ALL, "rus");
   deque<Programmer> a = parse("Text.txt");
@@ -296,29 +340,9 @@ int main() {
         }
       }
     } else if (command == "pr_info") {
-      unsigned counter = 0;
-      deque<Programmer> programmer = all_programmer();
-      sort(programmer.begin(), programmer.end(), cmp_by_name);
-      for (auto it = programmer.begin(); it != programmer.end(); it++) {
-        if (it == programmer.begin()) {
-          counter++;
-          if (it + 1 == programmer.end())
-            cout << it->getName() << '\t' << counter << endl;
-          continue;
-        }
-        if (it->getName() == (it - 1)->getName()) {
-          if (it->getIBMnumber() != (it - 1)->getIBMnumber()) {
-            counter++;
-            if (it + 1 == programmer.end())
-              cout << it->getName() << '\t' << counter << endl;
-          } else if (it + 1 == programmer.end()) {
-            cout << (it - 1)->getName() << '\t' << counter << endl;
-            counter = 1;
-          }
-        } else {
-          cout << (it - 1)->getName() << '\t' << counter << endl;
-          counter = 1;
-        }
+      deque<pair<string, unsigned>> res = working_units_number();
+      for (auto it = res.begin(); it != res.end(); it++) {
+        cout << it->first << '\t' << it->second << endl;
       }
     } else if (command == "calc_pr") {
       deque<Programmer> programmer = all_programmer();
@@ -327,8 +351,8 @@ int main() {
       deque<Programmer> programmer = all_programmer();
       string FIO;
       cout << "enter FIO" << endl;
-			cin.ignore();
-      getline(cin,FIO);
+      cin.ignore();
+      getline(cin, FIO);
       for (auto it = programmer.begin(); it != programmer.end(); it++) {
         if (it->getName() == FIO)
           cout << "  " << it->getIBMnumber() << '\t' << it->getcipher() << '\t'
@@ -337,7 +361,14 @@ int main() {
       }
     }
 
-    else if (command == "exit")
+    else if (command == "sort_by_number") {
+      deque<pair<string, unsigned>> res = working_units_number();
+      sort(res.begin(), res.end(), cmp_by_quantity);
+      for (auto it = res.begin(); it != res.end(); it++) {
+        cout << it->first << '\t' << it->second << endl;
+      }
+
+    } else if (command == "exit")
       exit(0);
 
     else
