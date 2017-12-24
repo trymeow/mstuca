@@ -111,7 +111,7 @@ deque<Programmer> all_programmer() {
   for (auto &p : fs::directory_iterator(".")) {
     fs::path pth = p.path();
     if (pth.extension() == ".dat") {
-      deque<Programmer> pr = output(pth.filename());
+      deque<Programmer> pr = output(pth.filename().string());
       prog.insert(prog.begin(), pr.begin(), pr.end());
     }
   }
