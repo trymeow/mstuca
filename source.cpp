@@ -212,6 +212,19 @@ bool cmp_by_theme(const Programmer &pr1, const Programmer &pr2) {
   }
 }
 
+bool cmp_by_name(const Programmer &pr1, const Programmer &pr2) {
+  if (pr1.getName() < pr2.getName())
+    return 1;
+  else if (pr1.getName() > pr2.getName())
+    return 0;
+  else if (pr1.getName() == pr2.getName()) {
+    if (pr1.getIBMnumber() < pr2.getIBMnumber())
+      return 1;
+    else
+      return 0;
+  }
+}
+
 int main() {
   setlocale(LC_ALL, "rus");
   deque<Programmer> a = parse("Text.txt");
@@ -279,6 +292,31 @@ int main() {
         } else {
           cout << (it - 1)->getName() << '\t' << (it - 1)->getcipher() << '\t'
                << counter << endl;
+          counter = 1;
+        }
+      }
+    } else if (command == "pr_info") {
+      unsigned counter = 0;
+      deque<Programmer> programmer = all_programmer();
+      sort(programmer.begin(), programmer.end(), cmp_by_name);
+      for (auto it = programmer.begin(); it != programmer.end(); it++) {
+        if (it == programmer.begin()) {
+          counter++;
+          if (it + 1 == programmer.end())
+            cout << it->getName() << '\t' << counter << endl;
+          continue;
+        }
+        if (it->getName() == (it - 1)->getName()) {
+          if (it->getIBMnumber() != (it - 1)->getIBMnumber()) {
+            counter++;
+            if (it + 1 == programmer.end())
+              cout << it->getName() << '\t' << counter << endl;
+          } else if (it + 1 == programmer.end()) {
+            cout << (it - 1)->getName() << '\t' << counter << endl;
+            counter = 1;
+          }
+        } else {
+          cout << (it - 1)->getName() << '\t' << counter << endl;
           counter = 1;
         }
       }
